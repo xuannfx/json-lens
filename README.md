@@ -42,6 +42,10 @@ Scripts/build-app.sh
 open ".build/Json Lens.app"
 ```
 
+## License
+
+Json Lens is released under the [MIT License](LICENSE).
+
 ## References
 
 Research notes for the next UI are in `docs/github-research.md`.
