@@ -459,15 +459,19 @@ private struct RawBrowserView: View {
                     }
                 }
             } else {
-                ScrollView([.vertical, .horizontal]) {
-                    RawCodeLines(
-                        lines: lines,
-                        selectedPath: model.selectedPath,
-                        wrap: false,
-                        select: model.select
-                    )
-                        .frame(minWidth: 720, alignment: .leading)
-                        .fixedSize(horizontal: true, vertical: false)
+                GeometryReader { proxy in
+                    ScrollView([.vertical, .horizontal]) {
+                        RawCodeLines(
+                            lines: lines,
+                            selectedPath: model.selectedPath,
+                            wrap: false,
+                            select: model.select
+                        )
+                        .frame(
+                            width: max(proxy.size.width, rawContentWidth(lines: lines)),
+                            alignment: .leading
+                        )
+                    }
                 }
             }
         }
@@ -483,7 +487,7 @@ private struct RawCodeLines: View {
     let select: (String) -> Void
 
     private var gutterWidth: CGFloat {
-        CGFloat(max(2, String(lines.count).count) * 8 + 18)
+        rawGutterWidth(lineCount: lines.count)
     }
 
     var body: some View {
@@ -501,6 +505,22 @@ private struct RawCodeLines: View {
         }
         .padding(.vertical, 10)
     }
+}
+
+private func rawGutterWidth(lineCount: Int) -> CGFloat {
+    CGFloat(max(2, String(lineCount).count) * 8 + 18)
+}
+
+private func rawContentWidth(lines: [RawLine]) -> CGFloat {
+    let font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+    let longestLineWidth = lines
+        .map { ($0.text as NSString).size(withAttributes: [.font: font]).width }
+        .max() ?? 0
+
+    let gutterAndSelectionWidth = rawGutterWidth(lineCount: lines.count) + 10 + 3
+    let codePadding = CGFloat(10 + 16)
+    let scrollSafetyMargin = CGFloat(96)
+    return ceil(gutterAndSelectionWidth + longestLineWidth + codePadding + scrollSafetyMargin)
 }
 
 private struct RawCodeLine: View {
@@ -543,6 +563,7 @@ private struct RawCodeLine: View {
                 select(path)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(isSelected ? palette.codeSelected.color : (isAlternate ? Color.clear : palette.hover.color))
     }
 }
