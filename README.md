@@ -42,6 +42,15 @@ Scripts/build-app.sh
 open ".build/Json Lens.app"
 ```
 
+## Build DMG
+
+```bash
+Scripts/build-dmg.sh
+open ".build/Json Lens.dmg"
+```
+
+The DMG contains `Json Lens.app` and an `Applications` shortcut for drag-and-drop installation.
+
 ## License
 
 Json Lens is released under the [MIT License](LICENSE).
