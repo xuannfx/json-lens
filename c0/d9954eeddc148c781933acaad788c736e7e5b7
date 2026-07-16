@@ -1,0 +1,31 @@
+Sources/JsonLens/AppDelegate.swift
+  s_08e89c0bcd4346::t_cd4737cd646d4d 5-36,56,207-210,258,271,285-291,298,301-309,313-314,335-361,365-439
+Sources/JsonLens/AppModel.swift
+  s_08e89c0bcd4346::t_1b6071edf4dce7 6,17,26
+Sources/JsonLens/PopupWindowController.swift
+  s_08e89c0bcd4346::t_376a84dcb0ee8a 5-18,40
+Sources/JsonLens/SelectionReader.swift
+  s_08e89c0bcd4346::t_d6e3c4dd99e1d9 3,16-19,42-72
+Sources/JsonLensCore/JSONDetector.swift
+  s_08e89c0bcd4346::t_025c1efefafcb7 103,105,366-408
+Tests/JsonLensCoreTests/JSONDetectorTests.swift
+  s_08e89c0bcd4346::t_ba4239cd210aba 27-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c0d9954eeddc148c781933acaad788c736e7e5b7",
+  "prompts": {},
+  "sessions": {
+    "s_08e89c0bcd4346": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead68-7b9f-7820-a411-5e7dc928ffa4",
+        "model": "unknown"
+      },
+      "human_author": "xuann <tonyxuann@outlook.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
