@@ -45,6 +45,7 @@ open ".build/Json Lens.app"
 ## Build DMG
 
 ```bash
+brew install create-dmg # once
 Scripts/build-dmg.sh
 open ".build/Json Lens.dmg"
 ```
