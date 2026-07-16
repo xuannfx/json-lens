@@ -1,0 +1,23 @@
+README.md
+  s_08e89c0bcd4346::t_186c781014f77b 48
+Scripts/build-dmg.sh
+  s_08e89c0bcd4346::t_5934e375380258 12-17,21-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "44e5faddd42ffd5d47622c9dd85e8e766f5a7265",
+  "prompts": {},
+  "sessions": {
+    "s_08e89c0bcd4346": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead68-7b9f-7820-a411-5e7dc928ffa4",
+        "model": "unknown"
+      },
+      "human_author": "xuann <tonyxuann@outlook.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
