@@ -5,6 +5,7 @@ import SwiftUI
 struct JsonPopupView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: SettingsStore
+    let onOpenSettings: () -> Void
 
     var body: some View {
         let palette = settings.colorTheme.palette
@@ -12,7 +13,7 @@ struct JsonPopupView: View {
         Group {
             if let document = model.document {
                 VStack(spacing: 0) {
-                    HeaderView(document: document, model: model)
+                    HeaderView(document: document, model: model, onOpenSettings: onOpenSettings)
                     Divider()
                     ToolbarView(document: document, model: model)
                     Divider()
@@ -40,6 +41,7 @@ struct JsonPopupView: View {
 private struct HeaderView: View {
     let document: JSONDocument
     @ObservedObject var model: AppModel
+    let onOpenSettings: () -> Void
     @Environment(\.lensPalette) private var palette
 
     var body: some View {
@@ -71,6 +73,10 @@ private struct HeaderView: View {
             }
 
             Spacer()
+
+            IconButton(title: "Settings", systemImage: "gearshape") {
+                onOpenSettings()
+            }
 
             IconButton(title: "Copy JSON", systemImage: "doc.on.doc") {
                 copyToPasteboard(document.prettyPrintedText)

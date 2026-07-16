@@ -15,7 +15,7 @@ The current UI is intentionally popup-first: no normal app window, no Dock icon,
 - Theme switching from both the status bar menu and Settings
 - Clipboard watch: copy JSON and the popup opens
 - Optional selected-text detection through Accessibility
-- `Command-Shift-J` opens selected text when Accessibility is available, otherwise opens clipboard
+- Configurable global shortcut opens selected text when Accessibility is available, otherwise opens clipboard
 - Tree view first, with expand/collapse
 - Tree rows wrap long values instead of forcing the panel wider
 - Raw formatted JSON view with line numbers, syntax color, and optional word wrap
@@ -49,7 +49,22 @@ Scripts/build-dmg.sh
 open ".build/Json Lens.dmg"
 ```
 
-The DMG contains `Json Lens.app` and an `Applications` shortcut for drag-and-drop installation.
+The DMG contains a branded app icon, a drag-and-drop guide, and an `Applications` shortcut.
+
+## Signed Distribution
+
+The default build is ad-hoc signed for local development. Gatekeeper can warn when an ad-hoc app is downloaded from the internet. For a public release, sign with a paid Apple Developer Program certificate and notarize the DMG:
+
+```bash
+export DEVELOPER_ID_APPLICATION="Developer ID Application: Your Name (TEAMID)"
+Scripts/build-dmg.sh
+
+# Create this once with xcrun notarytool store-credentials, then use its profile name.
+export NOTARY_PROFILE="json-lens-notary"
+Scripts/notarize-dmg.sh
+```
+
+After notarization, distribute the stapled `.build/Json Lens.dmg`.
 
 ## License
 

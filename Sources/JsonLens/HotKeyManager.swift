@@ -14,7 +14,7 @@ final class HotKeyManager {
         unregister()
     }
 
-    func register() {
+    func register(shortcut: GlobalShortcut) {
         unregister()
 
         var eventType = EventTypeSpec(
@@ -50,8 +50,8 @@ final class HotKeyManager {
 
         let id = EventHotKeyID(signature: fourCharacterCode("JLNS"), id: 1)
         RegisterEventHotKey(
-            UInt32(kVK_ANSI_J),
-            UInt32(cmdKey | shiftKey),
+            shortcut.keyCode,
+            shortcut.modifiers,
             id,
             GetEventDispatcherTarget(),
             0,

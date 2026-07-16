@@ -6,13 +6,17 @@ APP_NAME="Json Lens"
 BUNDLE_ID="dev.local.JsonLens"
 BUILD_DIR="$ROOT_DIR/.build/release"
 APP_DIR="$ROOT_DIR/.build/${APP_NAME}.app"
+ASSET_DIR="$ROOT_DIR/.build/assets"
+SIGNING_IDENTITY="${DEVELOPER_ID_APPLICATION:--}"
 
 cd "$ROOT_DIR"
 swift build -c release
 
-rm -rf "$APP_DIR"
-mkdir -p "$APP_DIR/Contents/MacOS"
+rm -rf "$APP_DIR" "$ASSET_DIR"
+mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$BUILD_DIR/JsonLens" "$APP_DIR/Contents/MacOS/JsonLens"
+swift "$ROOT_DIR/Scripts/generate-assets.swift" "$ASSET_DIR"
+/usr/bin/iconutil -c icns "$ASSET_DIR/AppIcon.iconset" -o "$APP_DIR/Contents/Resources/AppIcon.icns"
 
 cat > "$APP_DIR/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -28,6 +32,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<PLIST
   <string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key>
   <string>${APP_NAME}</string>
+  <key>CFBundleIconFile</key>
+  <string>AppIcon</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
@@ -42,5 +48,9 @@ cat > "$APP_DIR/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-/usr/bin/codesign --force --deep --sign - "$APP_DIR" >/dev/null
+SIGNING_ARGS=(--force --deep --sign "$SIGNING_IDENTITY")
+if [[ "$SIGNING_IDENTITY" != "-" ]]; then
+  SIGNING_ARGS+=(--options runtime --timestamp)
+fi
+/usr/bin/codesign "${SIGNING_ARGS[@]}" "$APP_DIR" >/dev/null
 echo "$APP_DIR"

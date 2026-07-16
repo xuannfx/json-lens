@@ -20,12 +20,14 @@ private final class EscapeClosingWindow: NSWindow {
 final class PopupWindowController: NSObject, NSWindowDelegate {
     private let model: AppModel
     private let settings: SettingsStore
+    private let onOpenSettings: () -> Void
     private var window: NSWindow?
     private var cancellables: Set<AnyCancellable> = []
 
-    init(model: AppModel, settings: SettingsStore) {
+    init(model: AppModel, settings: SettingsStore, onOpenSettings: @escaping () -> Void) {
         self.model = model
         self.settings = settings
+        self.onOpenSettings = onOpenSettings
         super.init()
 
         settings.objectWillChange
@@ -50,7 +52,9 @@ final class PopupWindowController: NSObject, NSWindowDelegate {
             window.level = .floating
             window.minSize = NSSize(width: 760, height: 460)
             window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
-            window.contentViewController = NSHostingController(rootView: JsonPopupView(model: model, settings: settings))
+            window.contentViewController = NSHostingController(
+                rootView: JsonPopupView(model: model, settings: settings, onOpenSettings: onOpenSettings)
+            )
             window.delegate = self
             applyAppearance(to: window)
             position(window)

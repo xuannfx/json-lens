@@ -104,7 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let selectionWatchItem = addMenuItem("Auto Detect Selection", action: #selector(toggleSelectionWatch), to: menu)
         selectionWatchItem.state = settings.autoDetectSelection ? .on : .off
 
-        let hotkeyItem = addMenuItem("Hotkey Command-Shift-J", action: #selector(toggleHotKey), to: menu)
+        let hotkeyItem = addMenuItem("Hotkey \(settings.hotkey.displayName)", action: #selector(toggleHotKey), to: menu)
         hotkeyItem.state = settings.enableHotkey ? .on : .off
 
         menu.addItem(.separator())
@@ -183,6 +183,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 Task { @MainActor in self?.configureHotKey() }
             }
             .store(in: &cancellables)
+
+        settings.$hotkey
+            .dropFirst()
+            .sink { [weak self] _ in
+                Task { @MainActor in self?.configureHotKey() }
+            }
+            .store(in: &cancellables)
     }
 
     private func configureHotKey() {
@@ -196,7 +203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let manager = HotKeyManager { [weak self] in
             Task { @MainActor in self?.openSelection() }
         }
-        manager.register()
+        manager.register(shortcut: settings.hotkey)
         hotKeyManager = manager
     }
 
@@ -318,7 +325,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func showPopup() {
         if popupController == nil {
-            popupController = PopupWindowController(model: model, settings: settings)
+            popupController = PopupWindowController(model: model, settings: settings) { [weak self] in
+                self?.openSettings()
+            }
         }
         popupController?.show()
     }

@@ -7,6 +7,8 @@ final class SettingsStore: ObservableObject {
         static let autoDetectSelection = "autoDetectSelection"
         static let includeFileURLs = "includeFileURLs"
         static let enableHotkey = "enableHotkey"
+        static let hotkeyKeyCode = "hotkeyKeyCode"
+        static let hotkeyModifiers = "hotkeyModifiers"
         static let maxCharacters = "maxCharacters"
         static let selectionStableDelay = "selectionStableDelay"
         static let appearance = "appearance"
@@ -31,6 +33,13 @@ final class SettingsStore: ObservableObject {
 
     @Published var enableHotkey: Bool {
         didSet { defaults.set(enableHotkey, forKey: Keys.enableHotkey) }
+    }
+
+    @Published var hotkey: GlobalShortcut {
+        didSet {
+            defaults.set(Int(hotkey.keyCode), forKey: Keys.hotkeyKeyCode)
+            defaults.set(Int(hotkey.modifiers), forKey: Keys.hotkeyModifiers)
+        }
     }
 
     @Published var maxCharacters: Int {
@@ -67,6 +76,13 @@ final class SettingsStore: ObservableObject {
         autoDetectSelection = defaults.object(forKey: Keys.autoDetectSelection) as? Bool ?? false
         includeFileURLs = defaults.object(forKey: Keys.includeFileURLs) as? Bool ?? true
         enableHotkey = defaults.object(forKey: Keys.enableHotkey) as? Bool ?? true
+        let keyCode = defaults.object(forKey: Keys.hotkeyKeyCode) as? Int
+        let modifiers = defaults.object(forKey: Keys.hotkeyModifiers) as? Int
+        let storedHotkey = GlobalShortcut(
+            keyCode: UInt32(keyCode ?? Int(GlobalShortcut.default.keyCode)),
+            modifiers: UInt32(modifiers ?? Int(GlobalShortcut.default.modifiers))
+        )
+        hotkey = storedHotkey.isValid ? storedHotkey : .default
         maxCharacters = defaults.object(forKey: Keys.maxCharacters) as? Int ?? 300_000
         selectionStableDelay = defaults.object(forKey: Keys.selectionStableDelay) as? Double ?? 0.9
         appearanceValue = Self.storedAppearance(in: defaults)

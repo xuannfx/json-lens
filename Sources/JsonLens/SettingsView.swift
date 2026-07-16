@@ -44,7 +44,18 @@ struct SettingsView: View {
                     Toggle("Watch clipboard", isOn: $settings.monitorClipboard)
                     Toggle("Auto detect selected text", isOn: $settings.autoDetectSelection)
                     Toggle("Read copied JSON files", isOn: $settings.includeFileURLs)
-                    Toggle("Enable Command-Shift-J", isOn: $settings.enableHotkey)
+                    HStack {
+                        Toggle("Enable global shortcut", isOn: $settings.enableHotkey)
+                        Spacer()
+                        ShortcutRecorder(shortcut: settings.hotkey) { shortcut in
+                            settings.hotkey = shortcut
+                        }
+                        .frame(width: 130, height: 28)
+                        .disabled(!settings.enableHotkey)
+                    }
+                    Text("Click the shortcut to record. Command, Option, or Control is required.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
 
                 SettingsSection(title: "Limits", palette: palette) {
