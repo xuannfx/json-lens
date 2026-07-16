@@ -1,0 +1,45 @@
+README.md
+  s_08e89c0bcd4346::t_82d4bbad8f1c87 18,52-67
+Scripts/build-app.sh
+  s_08e89c0bcd4346::t_279d93949c37fb 9-10,15-16,18-19,35-36,51-55
+Scripts/build-dmg.sh
+  s_08e89c0bcd4346::t_5f80f115791e9d 9,13,22-61,63-66
+Scripts/generate-assets.swift
+  s_08e89c0bcd4346::t_c1b3bdd393bbf5 1-100
+Scripts/notarize-dmg.sh
+  s_08e89c0bcd4346::t_7f12ee5a13bf53 1-11
+Sources/JsonLens/AppDelegate.swift
+  s_08e89c0bcd4346::t_fac0949d023bf1 107,186-192,206,328-330
+Sources/JsonLens/GlobalShortcut.swift
+  s_08e89c0bcd4346::t_ed0d3045f7d34c 1-76
+Sources/JsonLens/HotKeyManager.swift
+  s_08e89c0bcd4346::t_eca035c97e9c66 17,53-54
+Sources/JsonLens/JsonPopupView.swift
+  s_08e89c0bcd4346::t_c84f9ccdc2795b 8,16,44,77-80
+Sources/JsonLens/PopupWindowController.swift
+  s_08e89c0bcd4346::t_3b858d8ba1bf3c 23,27,30,55-57
+Sources/JsonLens/SettingsStore.swift
+  s_08e89c0bcd4346::t_979f12969c0435 10-11,38-44,79-85
+Sources/JsonLens/SettingsView.swift
+  s_08e89c0bcd4346::t_21bf66f6848a8b 47-58
+Sources/JsonLens/ShortcutRecorder.swift
+  s_08e89c0bcd4346::t_02cc72f988e327 1-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f7c26a8774131e4674f5db23132a266823be1964",
+  "prompts": {},
+  "sessions": {
+    "s_08e89c0bcd4346": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead68-7b9f-7820-a411-5e7dc928ffa4",
+        "model": "unknown"
+      },
+      "human_author": "xuann <tonyxuann@outlook.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
