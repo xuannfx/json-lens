@@ -2,6 +2,38 @@ import AppKit
 import Combine
 import JsonLensCore
 
+private struct DetectedInput {
+    let document: JSONDocument
+    let signature: String
+}
+
+private struct PasteboardSnapshot {
+    let items: [[NSPasteboard.PasteboardType: Data]]
+
+    static func capture(from pasteboard: NSPasteboard) -> PasteboardSnapshot {
+        let items = pasteboard.pasteboardItems?.map { item in
+            item.types.reduce(into: [NSPasteboard.PasteboardType: Data]()) { result, type in
+                result[type] = item.data(forType: type)
+            }
+        } ?? []
+        return PasteboardSnapshot(items: items)
+    }
+
+    func restore(to pasteboard: NSPasteboard) {
+        pasteboard.clearContents()
+        let pasteboardItems = items.map { itemData in
+            let item = NSPasteboardItem()
+            for (type, data) in itemData {
+                item.setData(data, forType: type)
+            }
+            return item
+        }
+        if !pasteboardItems.isEmpty {
+            pasteboard.writeObjects(pasteboardItems)
+        }
+    }
+}
+
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let settings = SettingsStore()
@@ -21,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var pendingSelectionText: String?
     private var pendingSelectionSignature: String?
     private var pendingSelectionUpdatedAt = Date.distantPast
+    private var suppressClipboardPollingUntil = Date.distantPast
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
@@ -171,6 +204,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard settings.monitorClipboard else {
             return
         }
+        guard Date() >= suppressClipboardPollingUntil else {
+            lastClipboardChangeCount = NSPasteboard.general.changeCount
+            return
+        }
 
         let pasteboard = NSPasteboard.general
         guard pasteboard.changeCount != lastClipboardChangeCount else {
@@ -218,6 +255,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @discardableResult
     private func openClipboardDocument(auto: Bool) -> Bool {
+        let pasteboardChangeCount = NSPasteboard.general.changeCount
         let candidates = ClipboardReader.candidates(
             maxCharacters: settings.maxCharacters,
             includeFileURLs: settings.includeFileURLs
@@ -230,6 +268,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 description: candidate.description,
                 auto: auto
             ) {
+                lastClipboardChangeCount = pasteboardChangeCount
                 return true
             }
         }
@@ -243,22 +282,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @discardableResult
     private func present(text: String, sourceKind: JSONSourceKind, description: String, auto: Bool) -> Bool {
+        guard let input = detectedInput(text: text, sourceKind: sourceKind, description: description) else {
+            return false
+        }
+        return present(input, auto: auto)
+    }
+
+    private func detectedInput(text: String, sourceKind: JSONSourceKind, description: String) -> DetectedInput? {
         guard let document = JSONDetector.detect(
             text,
             sourceKind: sourceKind,
             sourceDescription: description,
             options: JSONDetectionOptions(maxCharacters: settings.maxCharacters)
         ) else {
-            return false
+            return nil
         }
 
-        let signature = makeSignature(document.normalizedText)
-        if auto, signature == lastPresentedSignature {
+        return DetectedInput(
+            document: document,
+            signature: makeSignature(document.normalizedText)
+        )
+    }
+
+    @discardableResult
+    private func present(_ input: DetectedInput, auto: Bool) -> Bool {
+        if auto, input.signature == lastPresentedSignature {
             return true
         }
 
-        lastPresentedSignature = signature
-        model.show(document)
+        lastPresentedSignature = input.signature
+        model.show(input.document)
         showPopup()
         return true
     }
@@ -279,12 +332,111 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc private func openSelection() {
-        if let text = selectionReader.selectedText(maxCharacters: settings.maxCharacters),
-           present(text: text, sourceKind: .selection, description: "Selection", auto: false) {
+        Task { @MainActor in
+            await openSelectionFromUserAction()
+        }
+    }
+
+    private func openSelectionFromUserAction() async {
+        let pasteboard = NSPasteboard.general
+        let pasteboardChangeCount = pasteboard.changeCount
+        let clipboardIsFresh = pasteboardChangeCount != lastClipboardChangeCount
+        let clipboardCandidate = ClipboardReader.candidates(
+            maxCharacters: settings.maxCharacters,
+            includeFileURLs: settings.includeFileURLs
+        )
+        .lazy
+        .compactMap { candidate in
+            self.detectedInput(
+                text: candidate.text,
+                sourceKind: candidate.sourceKind,
+                description: candidate.description
+            )
+        }
+        .first
+
+        if clipboardIsFresh,
+           let clipboardCandidate,
+           present(clipboardCandidate, auto: false) {
+            lastClipboardChangeCount = pasteboardChangeCount
             return
         }
 
-        _ = openClipboardDocument(auto: false)
+        let axSelectionCandidate = selectionReader.selectedText(maxCharacters: settings.maxCharacters).flatMap {
+            detectedInput(text: $0, sourceKind: .selection, description: "Selection")
+        }
+
+        if let axSelectionCandidate,
+           axSelectionCandidate.signature != lastPresentedSignature,
+           present(axSelectionCandidate, auto: false) {
+            return
+        }
+
+        let copiedSelectionCandidate = await copiedSelectionCandidate(
+            originalPasteboardChangeCount: pasteboardChangeCount
+        )
+
+        if let copiedSelectionCandidate,
+           copiedSelectionCandidate.signature != lastPresentedSignature,
+           present(copiedSelectionCandidate, auto: false) {
+            return
+        }
+
+        if let clipboardCandidate,
+           clipboardCandidate.signature != lastPresentedSignature,
+           present(clipboardCandidate, auto: false) {
+            lastClipboardChangeCount = pasteboardChangeCount
+            return
+        }
+
+        if let axSelectionCandidate,
+           present(axSelectionCandidate, auto: false) {
+            return
+        }
+
+        if let copiedSelectionCandidate,
+           present(copiedSelectionCandidate, auto: false) {
+            return
+        }
+
+        if let clipboardCandidate,
+           present(clipboardCandidate, auto: false) {
+            lastClipboardChangeCount = pasteboardChangeCount
+            return
+        }
+
+        model.statusText = "No JSON found in selection or clipboard"
+        showPopup()
+    }
+
+    private func copiedSelectionCandidate(originalPasteboardChangeCount: Int) async -> DetectedInput? {
+        guard SelectionReader.isTrusted() else {
+            return nil
+        }
+
+        let pasteboard = NSPasteboard.general
+        let snapshot = PasteboardSnapshot.capture(from: pasteboard)
+
+        guard selectionReader.copySelectedTextToPasteboard() else {
+            return nil
+        }
+        suppressClipboardPollingUntil = Date().addingTimeInterval(1.0)
+
+        try? await Task.sleep(nanoseconds: 160_000_000)
+
+        guard pasteboard.changeCount != originalPasteboardChangeCount else {
+            return nil
+        }
+        defer {
+            snapshot.restore(to: pasteboard)
+            lastClipboardChangeCount = pasteboard.changeCount
+            suppressClipboardPollingUntil = Date().addingTimeInterval(0.35)
+        }
+
+        let text = pasteboard.string(forType: .string)
+        return text.flatMap {
+            detectedInput(text: $0, sourceKind: .selection, description: "Selection")
+        }
     }
 
     @objc private func toggleClipboardWatch() {

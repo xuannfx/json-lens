@@ -100,9 +100,9 @@ public enum JSONDetector {
             candidates.append(Candidate(text: decoded, format: .base64JSON, notes: ["Decoded Base64 text before parsing."]))
         }
 
-        let jsonc = removeTrailingCommas(stripJSONComments(text))
+        let jsonc = removeTrailingCommas(normalizeLooseJSONPunctuation(stripJSONComments(text)))
         if jsonc != text {
-            candidates.append(Candidate(text: jsonc, format: .jsonc, notes: ["Removed comments or trailing commas before parsing."]))
+            candidates.append(Candidate(text: jsonc, format: .jsonc, notes: ["Removed comments, normalized loose punctuation, or trailing commas before parsing."]))
         }
 
         return candidates
@@ -357,6 +357,49 @@ public enum JSONDetector {
             }
 
             result.append(character)
+            index = text.index(after: index)
+        }
+
+        return result
+    }
+
+    private static func normalizeLooseJSONPunctuation(_ text: String) -> String {
+        var result = ""
+        var index = text.startIndex
+        var inString = false
+        var isEscaped = false
+
+        while index < text.endIndex {
+            let character = text[index]
+
+            if inString {
+                result.append(character)
+                if isEscaped {
+                    isEscaped = false
+                } else if character == "\\" {
+                    isEscaped = true
+                } else if character == "\"" {
+                    inString = false
+                }
+                index = text.index(after: index)
+                continue
+            }
+
+            if character == "\"" {
+                inString = true
+                result.append(character)
+                index = text.index(after: index)
+                continue
+            }
+
+            switch character {
+            case "，":
+                result.append(",")
+            case "：":
+                result.append(":")
+            default:
+                result.append(character)
+            }
             index = text.index(after: index)
         }
 

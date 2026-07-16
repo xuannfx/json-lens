@@ -2,8 +2,8 @@ import Foundation
 import JsonLensCore
 
 enum ViewerMode: String, CaseIterable, Identifiable {
-    case tree = "Tree"
     case raw = "Raw"
+    case tree = "Tree"
     case columns = "Columns"
 
     var id: String { rawValue }
@@ -14,7 +14,7 @@ final class AppModel: ObservableObject {
     @Published var document: JSONDocument?
     @Published var selectedPath = "$"
     @Published var searchText = ""
-    @Published var mode: ViewerMode = .tree
+    @Published var mode: ViewerMode = .raw
     @Published var rawWrap = true
     @Published var expandedPaths: Set<String> = ["$"]
     @Published var statusText: String?
@@ -23,7 +23,7 @@ final class AppModel: ObservableObject {
         self.document = document
         selectedPath = "$"
         searchText = ""
-        mode = .tree
+        mode = .raw
         expandedPaths = ["$"]
         statusText = nil
     }

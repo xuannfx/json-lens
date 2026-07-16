@@ -2,6 +2,20 @@ import AppKit
 import Combine
 import SwiftUI
 
+private final class EscapeClosingWindow: NSWindow {
+    override func cancelOperation(_ sender: Any?) {
+        close()
+    }
+
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 53 {
+            close()
+            return
+        }
+        super.keyDown(with: event)
+    }
+}
+
 @MainActor
 final class PopupWindowController: NSObject, NSWindowDelegate {
     private let model: AppModel
@@ -23,7 +37,7 @@ final class PopupWindowController: NSObject, NSWindowDelegate {
 
     func show() {
         if window == nil {
-            let window = NSWindow(
+            let window = EscapeClosingWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 980, height: 660),
                 styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                 backing: .buffered,

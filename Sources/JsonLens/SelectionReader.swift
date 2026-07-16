@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Carbon
 import Foundation
 
 final class SelectionReader {
@@ -10,6 +11,10 @@ final class SelectionReader {
 
     func selectedText(maxCharacters: Int) -> String? {
         guard Self.isTrusted(), let app = NSWorkspace.shared.frontmostApplication else {
+            return nil
+        }
+        if let bundleIdentifier = Bundle.main.bundleIdentifier,
+           app.bundleIdentifier == bundleIdentifier {
             return nil
         }
 
@@ -33,5 +38,36 @@ final class SelectionReader {
         }
 
         return text
+    }
+
+    func copySelectedTextToPasteboard() -> Bool {
+        guard Self.isTrusted(), let app = NSWorkspace.shared.frontmostApplication else {
+            return false
+        }
+        if let bundleIdentifier = Bundle.main.bundleIdentifier,
+           app.bundleIdentifier == bundleIdentifier {
+            return false
+        }
+
+        let source = CGEventSource(stateID: .hidSystemState)
+        guard let keyDown = CGEvent(
+            keyboardEventSource: source,
+            virtualKey: CGKeyCode(kVK_ANSI_C),
+            keyDown: true
+        ),
+        let keyUp = CGEvent(
+            keyboardEventSource: source,
+            virtualKey: CGKeyCode(kVK_ANSI_C),
+            keyDown: false
+        )
+        else {
+            return false
+        }
+
+        keyDown.flags = .maskCommand
+        keyUp.flags = .maskCommand
+        keyDown.post(tap: .cghidEventTap)
+        keyUp.post(tap: .cghidEventTap)
+        return true
     }
 }
