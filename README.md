@@ -1,80 +1,48 @@
 # Json Lens
 
-Json Lens is a lightweight macOS menu bar popup for opening JSON-like text from the clipboard or current selection and browsing it visually.
+[中文文档](README.zh-CN.md)
 
-The current UI is intentionally popup-first: no normal app window, no Dock icon, and no surprise Accessibility prompt during normal clipboard use.
+Json Lens is a lightweight macOS menu bar JSON viewer. Copy or select JSON to open a floating browser with no Dock icon or full app window.
 
 ## Features
 
-- Detection for JSON, JSONC comments/trailing commas, JSON Lines, Base64 JSON, URL-encoded JSON, Markdown code fences, and embedded JSON
-- Normalized `JSONDocument` model with flattened tree paths
-- Menu bar utility with floating popup
-- Popup opens on the screen containing the mouse and uses stable floating-window behavior for multi-display setups
-- Appearance switcher with System, Light, and Dark modes
-- Multiple color themes: Quartz, GitHub, Solarized, and Prism
-- Theme switching from both the status bar menu and Settings
-- Clipboard watch: copy JSON and the popup opens
-- Optional selected-text detection through Accessibility
-- Configurable global shortcut opens selected text when Accessibility is available, otherwise opens clipboard
-- Tree view first, with expand/collapse
-- Tree rows wrap long values instead of forcing the panel wider
-- Raw formatted JSON view with line numbers, syntax color, and optional word wrap
-- Raw syntax highlighting uses the selected theme for keys, strings, numbers, booleans, nulls, and punctuation
-- Raw mode includes a compact color legend for token meanings
-- Raw rows are clickable and sync the inspector to the matching JSON path
-- Resizable split view between browser and inspector panels
-- Inspector breadcrumb and parent navigation for drilling back up after selecting children
-- Inspector panel scrolls vertically as one surface, including metadata and children
-- Column view inspired by macOS Finder and JSON Hero
-- Search across keys, paths, and values
-- Inspector with selected path, type, preview, children, and inferred string content
+- Detects JSON, JSONC, JSON Lines, and common JSON text formats
+- Raw, Tree, and Columns views
+- Formatting, syntax highlighting, wrapping, search, expand, and collapse
+- Path, type, and child-node inspector with resizable panes
+- Clipboard watching, configurable global shortcut, and optional selection detection
+- Light/dark appearance and four color themes
 
-## Run
+## Usage
+
+1. Download `Json Lens.dmg` from [Releases](https://github.com/xuannfx/json-lens/releases/latest), then open it.
+2. Drag `Json Lens.app` to `Applications`, then launch it.
+3. Click the `{}` menu bar icon or copy JSON. With clipboard watching enabled, the viewer opens automatically.
+4. The default shortcut is `Command-Shift-J`. It attempts to read JSON from the current selection or clipboard.
+5. Use the settings icon in the popup header to change the shortcut, detection behavior, appearance, and theme.
+
+Use `Tree` for hierarchy, `Raw` for line numbers, syntax highlighting, and wrapping, and `Columns` for step-by-step drilling. Press `Esc` to close the popup.
+
+## Permissions and Gatekeeper
+
+- **Accessibility** is only used when selected-text detection is enabled or another app's selected text needs to be read. Clipboard viewing does not require it.
+- Public builds are currently ad-hoc signed. On first launch after downloading, macOS may show an unidentified-developer warning. In Finder, Control-click the app, choose **Open**, and confirm once.
+
+## Development and Build
 
 ```bash
 swift run JsonLens
-```
 
-## Build App
-
-```bash
+# Build app
 Scripts/build-app.sh
 open ".build/Json Lens.app"
-```
 
-## Build DMG
-
-```bash
-python3 -m pip install --user dmgbuild # once
+# Build DMG (install once)
+python3 -m pip install --user dmgbuild
 Scripts/build-dmg.sh
 open ".build/Json Lens.dmg"
 ```
 
-The DMG contains a branded app icon, a drag-and-drop guide, and an `Applications` shortcut.
-
-## Signed Distribution
-
-The default build is ad-hoc signed for local development. Gatekeeper can warn when an ad-hoc app is downloaded from the internet. For a public release, sign with a paid Apple Developer Program certificate and notarize the DMG:
-
-```bash
-export DEVELOPER_ID_APPLICATION="Developer ID Application: Your Name (TEAMID)"
-Scripts/build-dmg.sh
-
-# Create this once with xcrun notarytool store-credentials, then use its profile name.
-export NOTARY_PROFILE="json-lens-notary"
-Scripts/notarize-dmg.sh
-```
-
-After notarization, distribute the stapled `.build/Json Lens.dmg`.
-
 ## License
 
-Json Lens is released under the [MIT License](LICENSE).
-
-## References
-
-Research notes for the next UI are in `docs/github-research.md`.
-
-- [Boop](https://github.com/IvanMathy/Boop): lightweight developer scratchpad model.
-- [DevToysMac](https://github.com/DevToys-app/DevToysMac): native macOS developer utility and JSON formatter entry point.
-- [JSON Hero](https://github.com/triggerdotdev/jsonhero-web): tree/search/path-oriented JSON exploration ideas.
+[MIT License](LICENSE)
