@@ -90,7 +90,7 @@ private struct HeaderView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(.bar)
+        .background(palette.pane.color)
     }
 }
 
@@ -132,14 +132,14 @@ private struct ToolbarView: View {
                 Button {
                     model.expandAll()
                 } label: {
-                    Label("Expand", systemImage: "arrow.down.right.and.arrow.up.left")
+                    Label("Expand", systemImage: "arrow.up.left.and.arrow.down.right")
                 }
                 .controlSize(.small)
 
                 Button {
                     model.collapseAll()
                 } label: {
-                    Label("Collapse", systemImage: "arrow.up.left.and.arrow.down.right")
+                    Label("Collapse", systemImage: "arrow.down.right.and.arrow.up.left")
                 }
                 .controlSize(.small)
             }

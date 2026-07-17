@@ -184,16 +184,10 @@ private struct ThemeTile: View {
             }
 
             HStack(spacing: 5) {
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(palette.key.color)
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(palette.string.color)
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(palette.number.color)
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(palette.bool.color)
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(palette.null.color)
+                ForEach(Array(theme.previewColors.enumerated()), id: \.offset) { _, color in
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(color)
+                }
             }
             .frame(height: 14)
         }

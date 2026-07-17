@@ -76,6 +76,21 @@ enum LensColorTheme: String, CaseIterable, Identifiable {
         }
     }
 
+    var previewColors: [Color] {
+        let colors: [UInt32]
+        switch self {
+        case .quartz:
+            colors = [0x4C8FEA, 0x20AE9B, 0xE7A043, 0x8865CE, 0xD9507E]
+        case .github:
+            colors = [0x24292F, 0x0969DA, 0x1A7F37, 0xCF222E, 0x8250DF]
+        case .solarized:
+            colors = [0x073642, 0x268BD2, 0x2AA198, 0xB58900, 0xDC322F]
+        case .prism:
+            colors = [0xB01961, 0x6945C6, 0xEF6B73, 0xB55B00, 0x147D76]
+        }
+        return colors.map { Color(nsColor: nsColor(hex: $0, alpha: 1)) }
+    }
+
     var palette: LensPalette {
         switch self {
         case .quartz:
@@ -101,10 +116,10 @@ enum LensColorTheme: String, CaseIterable, Identifiable {
             )
         case .github:
             return LensPalette(
-                window: .init(0xF6F8FA, 0x0D1117),
+                window: .init(0xF1F5F9, 0x0D1117),
                 pane: .init(0xFFFFFF, 0x161B22),
                 code: .init(0xFFFFFF, 0x0D1117),
-                border: .init(0xD0D7DE, 0x30363D),
+                border: .init(0xBFC8D2, 0x30363D),
                 selected: .init(0xDDF4FF, 0x1F6FEB, lightAlpha: 0.9, darkAlpha: 0.36),
                 codeSelected: .init(0xDDF4FF, 0x1F6FEB, lightAlpha: 0.96, darkAlpha: 0.44),
                 hover: .init(0xF3F4F6, 0x21262D, lightAlpha: 0.9, darkAlpha: 0.82),
@@ -122,9 +137,9 @@ enum LensColorTheme: String, CaseIterable, Identifiable {
             )
         case .solarized:
             return LensPalette(
-                window: .init(0xFDF6E3, 0x002B36),
-                pane: .init(0xEEE8D5, 0x073642),
-                code: .init(0xFFFBEC, 0x00212B),
+                window: .init(0xFDF3D7, 0x002B36),
+                pane: .init(0xF2E6C5, 0x073642),
+                code: .init(0xFFF9E8, 0x00212B),
                 border: .init(0xD8D0B7, 0x31535D, lightAlpha: 0.9, darkAlpha: 0.9),
                 selected: .init(0xD7E9D0, 0x124852, lightAlpha: 0.82, darkAlpha: 0.9),
                 codeSelected: .init(0xD7E9D0, 0x164F5A, lightAlpha: 0.9, darkAlpha: 0.94),
@@ -143,24 +158,24 @@ enum LensColorTheme: String, CaseIterable, Identifiable {
             )
         case .prism:
             return LensPalette(
-                window: .init(0xF8F7FF, 0x101014),
-                pane: .init(0xFFFFFF, 0x181820),
-                code: .init(0xFFFFFF, 0x0B0B10),
-                border: .init(0xD8D4E8, 0x35313F),
-                selected: .init(0xE5F0FF, 0x263D5B, lightAlpha: 0.94, darkAlpha: 0.9),
-                codeSelected: .init(0xEEF5FF, 0x233A56, lightAlpha: 1, darkAlpha: 1),
-                hover: .init(0xF0EEF9, 0x24232D, lightAlpha: 0.92, darkAlpha: 0.9),
-                gutter: .init(0xF1F0FA, 0x16161D),
-                plain: .init(0x17171D, 0xF2F1F5),
-                key: .init(0x006ADC, 0x4DB7FF),
-                string: .init(0x008A65, 0x61D394),
-                number: .init(0xB85500, 0xFFB15D),
-                bool: .init(0x7A3FB2, 0xC9A2FF),
-                null: .init(0xD12D62, 0xFF7EAF),
-                punctuation: .init(0x69707D, 0xA5A8B6),
-                object: .init(0x006ADC, 0x4DB7FF),
-                array: .init(0x008A8A, 0x55D6D6),
-                accent: .init(0x006ADC, 0x4DB7FF)
+                window: .init(0xFFF4FA, 0x17101C),
+                pane: .init(0xFDE7F3, 0x24152A),
+                code: .init(0xFFFBFD, 0x120B16),
+                border: .init(0xE8BED7, 0x503A59),
+                selected: .init(0xF9CCE5, 0x653452, lightAlpha: 0.9, darkAlpha: 0.88),
+                codeSelected: .init(0xFFE2F1, 0x73395C, lightAlpha: 0.94, darkAlpha: 0.92),
+                hover: .init(0xFCEAF4, 0x302036, lightAlpha: 0.94, darkAlpha: 0.9),
+                gutter: .init(0xF8DFED, 0x201424),
+                plain: .init(0x301426, 0xF7EAF2),
+                key: .init(0xB01961, 0xFF8FC5),
+                string: .init(0x147D76, 0x75E0D1),
+                number: .init(0xB55B00, 0xFFC46B),
+                bool: .init(0x6945C6, 0xC9B5FF),
+                null: .init(0xD12D62, 0xFF93B9),
+                punctuation: .init(0x846878, 0xB89EAD),
+                object: .init(0xB01961, 0xFF8FC5),
+                array: .init(0x147D76, 0x75E0D1),
+                accent: .init(0xB01961, 0xFF8FC5)
             )
         }
     }

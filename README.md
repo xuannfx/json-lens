@@ -45,7 +45,7 @@ open ".build/Json Lens.app"
 ## Build DMG
 
 ```bash
-brew install create-dmg # once
+python3 -m pip install --user dmgbuild # once
 Scripts/build-dmg.sh
 open ".build/Json Lens.dmg"
 ```

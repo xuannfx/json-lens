@@ -29,6 +29,8 @@ final class SettingsWindowController {
             window.title = "Json Lens Settings"
             window.isReleasedWhenClosed = false
             window.minSize = NSSize(width: 520, height: 520)
+            window.level = .floating
+            window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
             window.contentViewController = NSHostingController(rootView: SettingsView(settings: settings))
             applyAppearance(to: window)
             window.center()
@@ -38,7 +40,8 @@ final class SettingsWindowController {
         if let window {
             applyAppearance(to: window)
         }
-        window?.makeKeyAndOrderFront(nil)
+        window?.orderFrontRegardless()
+        window?.makeKey()
         NSApp.activate(ignoringOtherApps: true)
     }
 
