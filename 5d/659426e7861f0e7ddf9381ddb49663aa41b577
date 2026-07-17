@@ -1,0 +1,23 @@
+README.md
+  s_08e89c0bcd4346::t_e3aaa746273097 3,5,9-14,16,18-22,24,26,28-29,31,33-34,36-38,40-41,43,48
+README.zh-CN.md
+  s_08e89c0bcd4346::t_12796c6561c2a8 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5d659426e7861f0e7ddf9381ddb49663aa41b577",
+  "prompts": {},
+  "sessions": {
+    "s_08e89c0bcd4346": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead68-7b9f-7820-a411-5e7dc928ffa4",
+        "model": "unknown"
+      },
+      "human_author": "xuann <tonyxuann@outlook.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
