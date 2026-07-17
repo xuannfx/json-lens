@@ -1,0 +1,35 @@
+README.md
+  s_08e89c0bcd4346::t_982d55d0dcad26 48
+Scripts/build-app.sh
+  s_08e89c0bcd4346::t_c1f61996f432a2 40,42
+Scripts/build-dmg.sh
+  s_08e89c0bcd4346::t_a96e71953368a1 11-12,16,18-24
+Scripts/dmg-settings.py
+  s_08e89c0bcd4346::t_b8d84d8ac83fd6 1-28
+Sources/JsonLens/JsonPopupView.swift
+  s_08e89c0bcd4346::t_34f9b7e3f7395f 93,135,142
+Sources/JsonLens/SettingsView.swift
+  s_08e89c0bcd4346::t_246ca14f14977e 187-190
+Sources/JsonLens/SettingsWindowController.swift
+  s_08e89c0bcd4346::t_1c35a029ff13e6 32-33,43-44
+Sources/JsonLens/Theme.swift
+  s_08e89c0bcd4346::t_c5e12512c609c5 79-93,119,122,140-142,161-178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e3eb88cb5591863fe83963cb72728f5f1d7b6370",
+  "prompts": {},
+  "sessions": {
+    "s_08e89c0bcd4346": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead68-7b9f-7820-a411-5e7dc928ffa4",
+        "model": "unknown"
+      },
+      "human_author": "xuann <tonyxuann@outlook.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
